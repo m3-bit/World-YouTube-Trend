@@ -1,0 +1,150 @@
+<!doctype html>
+<html lang="en">
+
+<head>
+
+	<?!= include('css'); ?>
+
+	<link href="https://getbootstrap.com/docs/5.1/dist/css/bootstrap.min.css" rel="stylesheet"
+		integrity="sha384-KyZXEAg3QhqLMpG8r+8fhAXLRk2vvoC2f3B09zVXn8CA5QIVfZOJ3BCsw2P0p/We" crossorigin="anonymous">
+
+</head>
+
+<body class="bg-light">
+
+	<nav class="navbar navbar-expand-lg fixed-top navbar-dark bg-dark" aria-label="Main navigation">
+		<div class="container-fluid">
+			<a class="navbar-brand" href="#">Switch Locale</a>
+			<button class="navbar-toggler p-0 border-0" type="button" id="navbarSideCollapse" aria-label="Toggle navigation">
+        <span class="navbar-toggler-icon"></span>
+      </button>
+
+			<div id="nav" class="navbar-collapse offcanvas-collapse" id="navbarsExampleDefault">
+				<ul class="navbar-nav me-auto mb-2 mb-lg-0">
+					<li class="nav-item">
+						<a class="nav-link active" aria-current="page" href="#" onclick="testNew()">JAPAN</a>
+					</li>
+					<li class="nav-item">
+						<a class="nav-link" aria-current="page" href='#' onclick="reloadData('US', this)">US</a>
+					</li>
+					<li class="nav-item">
+						<a class="nav-link" aria-current="page" href='#' onclick="reloadData('DE', this)">GERMANY</a>
+					</li>
+					<li class="nav-item">
+						<a class="nav-link" aria-current="page" href='#' onclick="reloadData('GB', this)">GREAT BRITAIN</a>
+					</li>
+					<li class="nav-item">
+						<a class="nav-link" aria-current="page" href='#' onclick="reloadData('KR', this)">KOREA</a>
+					</li>
+					<li class="nav-item">
+						<a class="nav-link" aria-current="page" href='#' onclick="reloadData('BE', this)">BELGIUM</a>
+					</li>
+					<li class="nav-item">
+						<a class="nav-link" aria-current="page" href='#' onclick="reloadData('FR', this)">FRANCE</a>
+					</li>
+					<li class="nav-item">
+						<a class="nav-link" aria-current="page" href='#' onclick="reloadData('CH', this)">SWITZERLAND</a>
+					</li>
+					<li class="nav-item">
+						<a class="nav-link" aria-current="page" href='#' onclick="reloadData('CA', this)">CANADA</a>
+					</li>
+					<li class="nav-item">
+						<a class="nav-link" aria-current="page" href='#' onclick="reloadData('IN', this)">INDIA</a>
+					</li>
+					<li class="nav-item">
+						<a class="nav-link" aria-current="page" href='#' onclick="reloadData('IL', this)">ISRAEL</a>
+					</li>
+					<li class="nav-item">
+						<a class="nav-link" aria-current="page" href='#' onclick="reloadData('AU', this)">AUSTRALIA</a>
+					</li>
+				</ul>
+			</div>
+		</div>
+	</nav>
+
+	<main class="container">
+		<div class="d-flex align-items-center p-3 my-3 text-white bg-purple rounded shadow-sm">
+			<img class="me-3" src="https://image.flaticon.com/icons/png/512/187/187210.png" alt="" width="48" height="48">
+			<div class="lh-1">
+				<h1 class="h6 mb-0 text-white lh-1">World YouTube Trend</h1>
+				<small>by <a href="https://mykindatech.com" target="_blank">m3-bit</a></small>
+			</div>
+		</div>
+
+		<div id="trendTable" class="my-3 p-3 bg-body rounded shadow-sm"></div>
+	</main>
+
+	<template>
+		<div class="d-flex text-muted pt-3">
+			<img class="bd-placeholder-img flex-shrink-0 me-2 rounded" src=""/>
+			<div class="pb-3 mb-0 small lh-sm border-bottom">
+				<div class="d-flex justify-content-between"></div>
+				<span class="d-block"></span>
+			</div>
+		</div>
+	</template>
+
+	<script>
+		window.onload = function() {
+        google.script.run.withSuccessHandler(addList).getData("JP");
+      }
+
+      function addList(data) {
+        
+          var el = document.getElementById('trendTable');
+
+          for (const val of data.items) {
+            var temp = document.getElementsByTagName("template")[0];
+            var clone = temp.content.cloneNode(true);
+            clone.querySelector('img').src = val.snippet.thumbnails.default.url;
+
+            var title = clone.querySelector('.justify-content-between');
+            var a1 = document.createElement('a');
+            var strong = document.createElement('strong');
+            strong.innerHTML = val.snippet.title;
+            a1.appendChild(strong);
+            a1.href = 'https://www.youtube.com/watch?v=' + val.id;
+            a1.setAttribute('target', '_blank');
+            title.appendChild(a1);
+
+            var description = clone.querySelector('.d-block');
+            description.textContent = val.snippet.description.substring(0, 200);
+            description.appendChild(document.createElement("br"));
+            var a2 = document.createElement('a');
+            var linkText = document.createTextNode(val.snippet.channelTitle);
+            a2.appendChild(linkText);
+            a2.href = 'https://www.youtube.com/channel/' + val.snippet.channelId;
+            a2.setAttribute('target', '_blank');
+            description.appendChild(a2);
+            
+            el.appendChild(clone);
+          }
+      }
+
+      function reloadData(la, element) {
+        var list = document.getElementById("nav").getElementsByTagName("a");
+        for (const a of list) {
+          a.classList.remove('active');
+        }
+        element.classList.add('active');
+        document.getElementById("trendTable").innerHTML = '';
+        google.script.run.withSuccessHandler(addList).getData(la);
+      }
+
+      (function () {
+        'use strict'
+
+        document.querySelector('#navbarSideCollapse').addEventListener('click', function () {
+          document.querySelector('.offcanvas-collapse').classList.toggle('open')
+        })
+      })()
+
+	</script>
+
+	<script src="https://getbootstrap.com/docs/5.1/dist/js/bootstrap.bundle.min.js"
+		integrity="sha384-U1DAWAznBHeqEIlVSCgzq+c9gqGAJn5c/t99JyeKa9xxaYpSvHU5awsuZVVFIhvj" crossorigin="anonymous">
+	</script>
+
+</body>
+
+</html>
