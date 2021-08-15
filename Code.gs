@@ -1,7 +1,6 @@
 function doGet() {
   var htmlTemplate = HtmlService.createTemplateFromFile('index');
   var htmlOutput = htmlTemplate.evaluate()
-    .setSandboxMode(HtmlService.SandboxMode.IFRAME)
     .setTitle('World YouTube Trend')
     .addMetaTag('viewport', 'width=device-width, initial-scale=1, user-scalable=no');
   return htmlOutput
